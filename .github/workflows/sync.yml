@@ -1,0 +1,28 @@
+name: Sync Fork with Upstream
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # 每天 UTC 0 點（台灣時間早上 8 點）
+  workflow_dispatch:     # 手動執行也可以
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout your fork
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Add upstream and fetch
+        run: |
+          git remote add upstream https://github.com/srbhr/Resume-Matcher.git
+          git fetch upstream
+          git checkout main
+          git merge upstream/main
+          git push origin main
